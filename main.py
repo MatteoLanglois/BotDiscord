@@ -8,11 +8,10 @@ bot = commands.Bot(command_prefix='$')
 async def on_ready():
     print("Logged on as", bot.user)
 
-@bot.event
 async def on_message(message):
     if message.author.id == bot.user.id:
         return
-    elif "di" in message.content.lower():
+    if "di" in message.content.lower():
         li = message.content.split(" ")
         for word in li:
             if "di" in word.lower():
@@ -35,14 +34,13 @@ async def cpu(ctx):
     temp = psutil.sensors_temperatures()
     embedvar.add_field(name="Température du package processeur :",
                        value=f"Package : {temp['coretemp'][0][1]}°")
-    txt = f"\n - Core n°0 : {temp['coretemp'][1][1]}°" \
-          f"\n - Core n°1 : {temp['coretemp'][2][1]}°" \
-          f"\n - Core n°2 : {temp['coretemp'][3][1]}°" \
-          f"\n - Core n°3 : {temp['coretemp'][4][1]}°" \
-          f"\n - Core n°4 : {temp['coretemp'][5][1]}°" \
-          f"\n - Core n°5 : {temp['coretemp'][5][1]}°"
     embedvar.add_field(name="Température de chaque coeur :",
-                       value=txt)
+                       value=f"\n - Core n°0 : {temp['coretemp'][1][1]}°" \
+                             f"\n - Core n°1 : {temp['coretemp'][2][1]}°" \
+                             f"\n - Core n°2 : {temp['coretemp'][3][1]}°" \
+                             f"\n - Core n°3 : {temp['coretemp'][4][1]}°" \
+                             f"\n - Core n°4 : {temp['coretemp'][5][1]}°" \
+                             f"\n - Core n°5 : {temp['coretemp'][5][1]}°")
     embedvar.add_field(name="Utilsation du processeur :",
                        value=f"{psutil.cpu_percent() * 10}%",
                        inline=False)
