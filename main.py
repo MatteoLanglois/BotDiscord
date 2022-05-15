@@ -8,11 +8,18 @@ bot = commands.Bot(command_prefix='$')
 async def on_ready():
     print("Logged on as", bot.user)
 
+@bot.event
 async def on_message(message):
     if message.author.id == bot.user.id:
         return
+    elif "di" in message.content.lower():
+        li = message.content.split(" ")
+        for word in li:
+            if "di" in word.lower():
+                await message.channel.send(word[2:])
 
-@bot.command(help='Respond pong to ping')
+
+@bot.command(help='Responds pong to ping')
 async def ping(ctx):
     await ctx.channel.send("pong")
 
