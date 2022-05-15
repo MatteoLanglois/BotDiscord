@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import psutil
+import matplotlib.pyplot as plt
 
 bot = commands.Bot(command_prefix='$')
 
@@ -16,6 +17,12 @@ async def on_message(message):
         for word in li:
             if "di" in word.lower():
                 await message.channel.send(word[2:])
+    if "quoi" in message.content.lower():
+        li = message.content.split(" ")
+        li = [I.lower for I in li]
+        pos = li.index("quoi")
+        for I in range(pos, len(li)):
+            await message.channel.send(I)
 
 
 @bot.command(help='Responds pong to ping')
@@ -61,6 +68,11 @@ async def ram(ctx):
                        value=f"{round((psutil.virtual_memory().total - psutil.virtual_memory().available) / 10**9, 1)}Go"
                              f"/{psutil.virtual_memory().percent}%",
                        inline=False)
+    plt.pie([psutil.virtual_memory().available, psutil.virtual_memory().total - psutil.virtual_memory().available],
+            labels=["RAM Disponible", "RAM Utilisée"])
+    plt.savefig("/var/www/html/temp/temp.png")
+    file = discord.File("/var/www/html/temp/temp.png", filename="temp.png")
+    embedvar.set_image(url="https://les-roseaux.dev/temp/temp.png")
     await ctx.send(embed=embedvar)
 
 bot.run("OTc0OTQ3Nzc0Nzg3MzY3MDEz.GJQ8hB.kZ4xt9ky5oTcEIXBfze4aAiv2EsDe8ubi6rKvQ")
