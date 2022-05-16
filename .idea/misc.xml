@@ -5,11 +5,11 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="0" />
-          <option name="fileUrl" value="file://$PROJECT_DIR$/CPUtemp.csv" />
+          <option name="caretOffset" value="623" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/temperatures.py" />
         </OpenedFileInfo>
         <OpenedFileInfo>
-          <option name="caretOffset" value="684" />
+          <option name="caretOffset" value="0" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/main.py" />
         </OpenedFileInfo>
       </list>

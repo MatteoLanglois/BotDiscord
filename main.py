@@ -2,29 +2,10 @@ import discord
 from discord.ext import commands
 import psutil
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import csv
-import datetime as datetime
-from apscheduler.schedulers.background import BackgroundScheduler
-from threading import Thread
 
 bot = commands.Bot(command_prefix='$')
-
-scheduler = BackgroundScheduler()
-
-def TempGathering():
-    print("a")
-    temp = psutil.sensors_temperatures()
-    core = [temp['coretemp'][I][1] for I in range(0, 6)]
-    core.append(psutil.cpu_percent() * 10)
-    core.insert(0, datetime.datetime.now())
-    with open('CPUtemp.csv', 'a', newline='') as Temp:
-        writer = csv.writer(Temp)
-        writer.writerow(core)
-        print(core)
-        Temp.close()
-
-def SchCPU():
-    scheduler.add_job(TempGathering, 'interval', minutes=0.1, replace_existing=True, max_instances=20)
 
 @bot.event
 async def on_ready():
@@ -56,6 +37,11 @@ async def ping(ctx):
 async def text(ctx, arg):
     await ctx.send(arg)
     await ctx.message.delete()
+
+@bot.command(help='Clear the precedent message')
+async def clear(ctx, amount: int):
+    await ctx.message.delete()
+    await ctx.channel.purge(limit=amount)
 
 @bot.command(help='Responds with the temp of the CPU of your computer who host the bot')
 async def cpu(ctx):
@@ -104,20 +90,19 @@ async def CPU_usage(ctx):
     embedvar = discord.Embed(
         title="CPU stats", color=0xff4030
     )
-    stats = [[], [], [], [], [], [], [], []]
+    stats = [[], [], [], [], [], [], []]
+    tempDates = []
     with open('CPUtemp.csv', 'r', newline='') as Temp:
         file_reader = csv.reader(Temp)
         for line in file_reader:
-            for I in range(len(line)):
-                stats[I].append(float(line[I]))
-    for stat in stats[1:6]:
-        print(len(stat), len(stats[0]))
-        plt.plot(stat, stats[0])
+            for I in range(1, len(line)):
+                stats[I - 1].append(float(line[I]))
+            tempDates.append(line[0])
+        Temp.close()
+    plt.plot(tempDates, stats[0], '-', label="Core 0")
     plt.savefig("/var/www/html/temp/temp2.png", bbox_inches='tight')
     embedvar.set_image(url="https://les-roseaux.dev/temp/temp2.png")
     await ctx.send(embed=embedvar)
 
-CPU_temp = Thread(target=SchCPU)
-CPU_temp.start()
 
 bot.run("OTc0OTQ3Nzc0Nzg3MzY3MDEz.GJQ8hB.kZ4xt9ky5oTcEIXBfze4aAiv2EsDe8ubi6rKvQ")
