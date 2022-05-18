@@ -1,10 +1,6 @@
-#!/usr/bin/python
 import psutil
 import csv
 import datetime as dt
-from apscheduler.schedulers.background import BackgroundScheduler
-
-scheduler = BackgroundScheduler()
 
 
 def csvcount(filename):
@@ -27,24 +23,34 @@ def TempGathering(filename):
     temp = psutil.sensors_temperatures()
     core = [temp['coretemp'][I][1] for I in range(0, 6)]
     core.append(psutil.cpu_percent())
-    x = dt.datetime.now().strftime('%H:%M:%S')
-    core.insert(0, dt.datetime.strptime(x, '%H:%M:%S'))
+    x = dt.datetime.now()
+    core.insert(0, x)
     with open(filename, 'a', newline='') as Temp:
         writer = csv.writer(Temp)
         writer.writerow(core)
         Temp.close()
 
+def RAMGathering(filename):
+    core = [(psutil.virtual_memory().total - psutil.virtual_memory().available) / 10**9]
+    x = dt.datetime.now()
+    core.insert(0, x)
+    with open(filename, 'a', newline='') as Temp:
+        writer = csv.writer(Temp)
+        writer.writerow(core)
+        Temp.close()
 
-def Gathering(filename):
+def Gathering(filename, file2):
     if csvcount(filename) < 48:
         TempGathering(filename)
     elif csvcount(filename) == 48:
         autodelete(filename)
         TempGathering(filename)
+    if csvcount(file2) < 48:
+        RAMGathering(file2)
+    elif csvcount(file2) == 48:
+        autodelete(file2)
+        RAMGathering(file2)
 
-
-Gathering("/home/matteo/Documents/Discord/BotDiscord/CPUtemp.csv")
-
-
-#job_cpu = scheduler.add_job(Gathering, 'interval', minutes=1, args=('CPUtemp.csv',))
+Gathering("/home/matteo/Documents/Discord/BotDiscord/CPUtemp.csv",
+          "/home/matteo/Documents/Discord/BotDiscord/RAMtemp.csv")
 
