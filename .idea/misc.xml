@@ -5,8 +5,12 @@
     <option name="openedFilesInfos">
       <list>
         <OpenedFileInfo>
-          <option name="caretOffset" value="4722" />
+          <option name="caretOffset" value="246" />
           <option name="fileUrl" value="file://$PROJECT_DIR$/main.py" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="0" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/RAMtemp.csv" />
         </OpenedFileInfo>
       </list>
     </option>

@@ -10,17 +10,18 @@ bot = commands.Bot(command_prefix='$')
 
 @bot.event
 async def on_ready():
-    print("Logged on as", bot.user)
+    print(f"Logged on as {bot.user} in {len(bot.guilds)} server.s!")
 
 @bot.event
 async def on_message(message):
+    await bot.process_commands(message)
     if message.author.id == bot.user.id:
         return
     elif "di" in message.content.lower():
         li = message.content.split(" ")
         for word in li:
             if "di" in word.lower():
-                await message.channel.send(word[2:])
+                await message.channel.send(word[2:])*
     elif "quoi" in message.content.lower():
         li = message.content.split(" ")
         li = [I.lower() for I in li]
@@ -31,6 +32,10 @@ async def on_message(message):
         if cond:
             await message.channel.send("feur")
 
+
+async def is_admin(ctx):
+    admin = discord.utils.get(ctx.guild.roles, name="Admin")
+    return admin in ctx.author.roles
 
 @bot.command(help='Responds pong to ping')
 async def ping(ctx):
@@ -47,10 +52,25 @@ async def clear(ctx, amount: int):
     await ctx.channel.purge(limit=amount)
 
 @bot.command(help='Change the activity of the bot')
-async def activity(ctx, game):
-    print("activity changed")
+@commands.check(is_admin)
+async def activity(ctx, type, game):
     await ctx.message.delete()
-    await bot.change_presence(activity=discord.Game(game))
+    if type.lower() == "game":
+        await bot.change_presence(activity=discord.Game(name=game))
+    elif type.lower() == "listening":
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name=game))
+    elif type.lower() == "watching":
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=game))
+    else:
+        await ctx.send("Type not found")
+
+@activity.error
+async def activity_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("Missing argument")
+    elif isinstance(error, commands.CheckFailure):
+        await ctx.send("You don't have the right to use this command")
+
 
 @bot.command(help='Responds with the temp of the CPU of your computer who host the bot')
 async def cpu(ctx):
@@ -81,7 +101,7 @@ async def cpu(ctx):
                 stats[I - 1].append(float(line[I]))
             tempDates.append(dateutil.parser.parse(line[0]))
         Temp.close()
-    plt.gca().xaxis.set_major_formatter()
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
     for I in range(1, len(stats)):
         plt.plot(tempDates, stats[I], label=f"Core {I}")
         plt.legend(["Core n°" + str(I)])
@@ -121,7 +141,7 @@ async def ram(ctx):
             stat.append(float(line[1]))
             tempDates.append(dateutil.parser.parse(line[0]))
         Temp.close()
-    plt.gca().xaxis.set_major_formatter()
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
     plt.plot(tempDates, stat, label=f"RAM utilisée")
     plt.legend("Ram utilisée")
     plt.gcf().autofmt_xdate()
@@ -133,4 +153,4 @@ async def ram(ctx):
     fig_ram.clear()
 
 
-bot.run("OTc0OTQ3Nzc0Nzg3MzY3MDEz.G55BO3.Wj0NRUMt9Bm15ek7txFAi-DDa_JnZRvWUVBOnY")
+bot.run("OTc0OTQ3Nzc0Nzg3MzY3MDEz.GvOvq8.YlDLZQJzK_ouSYH9tuqQaB8X5zI7aAco7GhQ94")

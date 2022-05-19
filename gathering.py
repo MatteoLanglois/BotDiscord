@@ -40,14 +40,14 @@ def RAMGathering(filename):
         Temp.close()
 
 def Gathering(filename, file2):
-    if csvcount(filename) < 48:
+    if csvcount(filename) < 288:
         TempGathering(filename)
-    elif csvcount(filename) == 48:
+    elif csvcount(filename) == 288:
         autodelete(filename)
         TempGathering(filename)
-    if csvcount(file2) < 48:
+    if csvcount(file2) < 288:
         RAMGathering(file2)
-    elif csvcount(file2) == 48:
+    elif csvcount(file2) == 288:
         autodelete(file2)
         RAMGathering(file2)
 
